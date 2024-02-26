@@ -11,7 +11,8 @@ class AdminPanel extends StatefulWidget {
   _AdminPanelState createState() => _AdminPanelState();
 }
 
-class _AdminPanelState extends State<AdminPanel> with AutomaticKeepAliveClientMixin {
+class _AdminPanelState extends State<AdminPanel>
+    with AutomaticKeepAliveClientMixin {
   String _imageFolderPath = 'No folder selected';
   List<File> _imageFiles = [];
   int _currentPage = 0;
@@ -49,7 +50,8 @@ class _AdminPanelState extends State<AdminPanel> with AutomaticKeepAliveClientMi
   }
 
   Future<void> _createTextFileForImage(File imageFile) async {
-    String txtFilePath = imageFile.path.replaceAll(RegExp(r'\.[^\.]+$'), '.txt');
+    String txtFilePath =
+        imageFile.path.replaceAll(RegExp(r'\.[^\.]+$'), '.txt');
     File txtFile = File(txtFilePath);
     if (!await txtFile.exists()) {
       await txtFile.create();
@@ -72,17 +74,22 @@ class _AdminPanelState extends State<AdminPanel> with AutomaticKeepAliveClientMi
     if (selectedDirectory != null) {
       setState(() {
         _imageFolderPath = selectedDirectory;
-        _currentPage = 0; // Reset to the first page whenever a new folder is selected
+        _currentPage =
+            0; // Reset to the first page whenever a new folder is selected
       });
       await _saveFolderPath(selectedDirectory);
       await _loadImages(selectedDirectory);
+    } else {
+      // Handle the case when selectedDirectory is null
+      // For example, show an error message or set a default value
     }
   }
 
   List<File> _getImagesForCurrentPage() {
     int startIndex = _currentPage * _imagesPerPage;
     int endIndex = startIndex + _imagesPerPage;
-    return _imageFiles.sublist(startIndex, endIndex.clamp(0, _imageFiles.length));
+    return _imageFiles.sublist(
+        startIndex, endIndex.clamp(0, _imageFiles.length));
   }
 
   @override
@@ -144,12 +151,17 @@ class _AdminPanelState extends State<AdminPanel> with AutomaticKeepAliveClientMi
       children: [
         IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: _currentPage > 0 ? () => setState(() => _currentPage--) : null,
+          onPressed:
+              _currentPage > 0 ? () => setState(() => _currentPage--) : null,
         ),
-        Text('Page ${_currentPage + 1} of ${(_imageFiles.length / _imagesPerPage).ceil()}'),
+        Text(
+            'Page ${_currentPage + 1} of ${(_imageFiles.length / _imagesPerPage).ceil()}'),
         IconButton(
           icon: const Icon(Icons.arrow_forward),
-          onPressed: _currentPage < (_imageFiles.length / _imagesPerPage).ceil() - 1 ? () => setState(() => _currentPage++) : null,
+          onPressed:
+              _currentPage < (_imageFiles.length / _imagesPerPage).ceil() - 1
+                  ? () => setState(() => _currentPage++)
+                  : null,
         ),
       ],
     );

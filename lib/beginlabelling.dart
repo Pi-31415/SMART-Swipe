@@ -144,7 +144,7 @@ class _BeginLabellingPageState extends State<BeginLabellingPage> {
       appBar: AppBar(
         title: const Text('Labelling Area'),
       ),
-      body: _imageFiles == null || _imageFiles.isEmpty
+      body: _imageFiles.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               // Added to ensure the page is scrollable
