@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'admin_panel.dart';
 import 'labels.dart';
 import 'beginlabelling.dart';
+import 'tindermode.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,11 +36,18 @@ class MainTabs extends StatefulWidget {
 class _MainTabsState extends State<MainTabs>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool isFolderSelected = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  void _handleFolderSelection(bool isSelected) {
+    setState(() {
+      isFolderSelected = isSelected;
+    });
   }
 
   @override
@@ -49,25 +57,38 @@ class _MainTabsState extends State<MainTabs>
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('SMART Swipe 2.0'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Admin Panel'),
-            Tab(text: 'Labels'),
-            Tab(text: 'Begin Labelling'),
+          tabs: [
+            const Tab(text: 'Admin Panel'),
+            const Tab(text: 'Labels'),
+            Tab(
+              icon: isFolderSelected ? null : const Icon(Icons.lock),
+              text: 'Normal Labelling',
+            ),
+            Tab(
+              icon: isFolderSelected ? null : const Icon(Icons.lock),
+              text: 'Tinder Mode',
+            ),
           ],
+          isScrollable: true,
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          AdminPanel(),
-          LabelsPage(),
-          BeginLabellingPage(),
+        children: [
+          AdminPanel(onFolderSelected: _handleFolderSelection),
+          const LabelsPage(),
+          if (isFolderSelected) const BeginLabellingPage() else Container(),
+          if (isFolderSelected)
+            const TinderModeLabellingPage()
+          else
+            Container(),
         ],
       ),
     );

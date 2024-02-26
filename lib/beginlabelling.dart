@@ -12,7 +12,7 @@ class BeginLabellingPage extends StatefulWidget {
 }
 
 class _BeginLabellingPageState extends State<BeginLabellingPage> {
-  late List<File> _imageFiles;
+  List<File> _imageFiles = [];
   late List<String> _labels;
   late int _currentImageIndex;
   late Set<String> _selectedLabels;
@@ -191,10 +191,10 @@ class _BeginLabellingPageState extends State<BeginLabellingPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: AspectRatio(
-                      aspectRatio: 16 / 9, // Set your desired aspect ratio
-                      child: Card(
-                        child: Image.file(_imageFiles[_currentImageIndex],
-                            fit: BoxFit.cover),
+                      aspectRatio: 16 / 5,
+                      child: Image.file(
+                        _imageFiles[_currentImageIndex],
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),

@@ -4,7 +4,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 
 class AdminPanel extends StatefulWidget {
-  const AdminPanel({Key? key}) : super(key: key);
+  final Function(bool) onFolderSelected;
+  const AdminPanel({Key? key, required this.onFolderSelected})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -79,9 +81,11 @@ class _AdminPanelState extends State<AdminPanel>
       });
       await _saveFolderPath(selectedDirectory);
       await _loadImages(selectedDirectory);
+      widget.onFolderSelected(true); // Notify that folder is selected
     } else {
       // Handle the case when selectedDirectory is null
       // For example, show an error message or set a default value
+      widget.onFolderSelected(false); // Notify that folder is not selected
     }
   }
 
