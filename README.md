@@ -1,6 +1,4 @@
-# smart_swipe_local
-
-# Smart Swipe - A fast labelling tool for AI image datasets
+# SMART Swipe - A fast labelling tool for AI image datasets
 **Author :** [Pi Ko](https://paingthet.com/) ([pk2269@nyu.edu](mailto:pk2269@nyu.edu))
 
 ![Image of Version](https://img.shields.io/badge/version-v1.0-green)
