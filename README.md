@@ -6,7 +6,7 @@ Smart Swipe Full Local Implementation, in Flutter
 
 First download this entire repository to your computer.
 
-Then just run the built linux binary is in
+Then just run the built linux binary in
 ```
 ./build/linux/x64/release/bundle/smart_swipe_local 
 ```
