@@ -8,7 +8,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-flutter.svg)](https://forthebadge.com) 
 [![forthebadge](https://forthebadge.com/images/badges/license-mit.svg)](https://forthebadge.com)
 
-SMART Swipe is a fast labelling tool for AI image datasets written in Flutter. It runs locally without any dependency, with an intuitive interface.
+SMART Swipe is **a fast labelling tool for AI image datasets** written in Flutter. It runs locally without any dependency, with an intuitive interface.
 
 ![Demo](ui.png)
 
@@ -74,4 +74,14 @@ After building, the built linux binary is in
 ./build/linux/x64/release/bundle/smart_swipe_local 
 ```
 
+## License
 
+This tool is released under the MIT License. See [LICENSE](LICENSE) for more details.
+
+## About
+
+![SMART LOGO](https://nyuad.nyu.edu/content/nyuad/en/home/research/faculty-labs-and-projects/smart-construction-research-group/jcr:content/mainparsys/columncontol_1182373776/columnpar4_1/image/image.adaptive.m1524841438804/394.jpg)
+
+This tool has been developed as a collaboration between [Pi](https://paingthet.com/) and [S.M.A.R.T. Construction Research Group](https://nyuad.nyu.edu/en/research/faculty-labs-and-projects/smart-construction-research-group.html) at New York University Abu Dhabi.
+
+Please contact <pk2269@nyu.edu> for any issues regarding this software.
