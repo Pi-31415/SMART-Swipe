@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import services for key events
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,11 +18,18 @@ class _BeginLabellingPageState extends State<BeginLabellingPage> {
   late int _currentImageIndex;
   late Set<String> _selectedLabels;
   late SharedPreferences _prefs;
-
+  late FocusNode _focusNode; // For Key Bindings
   @override
   void initState() {
     super.initState();
     _initialize();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   Future<void> _initialize() async {
@@ -138,69 +146,98 @@ class _BeginLabellingPageState extends State<BeginLabellingPage> {
     }
   }
 
+  // New method to handle key events
+  void _handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.keyP) {
+        _goToNextImage();
+      } else if (event.logicalKey == LogicalKeyboardKey.keyI) {
+        _goToPreviousImage();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Labelling Area'),
-      ),
-      body: _imageFiles.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              // Added to ensure the page is scrollable
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: LinearProgressIndicator(
-                      value: _currentImageIndex / (_imageFiles.length - 1),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Wrap(
-                      spacing: 8.0, // Space between chips
-                      children: _labels.map((label) {
-                        bool isSelected = _selectedLabels.contains(label);
-                        return ChoiceChip(
-                          label: Text(label),
-                          selected: isSelected,
-                          onSelected: (bool selected) {
-                            _toggleLabel(label);
-                          },
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _goToPreviousImage,
-                          child: const Text('Previous Image'),
-                        ),
-                        ElevatedButton(
-                          onPressed: _goToNextImage,
-                          child: const Text('Next Image'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: AspectRatio(
-                      aspectRatio: 16 / 5,
-                      child: Image.file(
-                        _imageFiles[_currentImageIndex],
-                        fit: BoxFit.contain,
+        appBar: AppBar(
+          title: const Text('Labelling Area'),
+        ),
+        body: KeyboardListener(
+          focusNode: _focusNode,
+          onKeyEvent: _handleKeyEvent,
+          autofocus: true,
+          child: Focus(
+            onFocusChange: (hasFocus) {
+              if (hasFocus) {
+                print("KeyboardListener has focus");
+              } else {
+                print("KeyboardListener lost focus");
+              }
+            },
+            child: GestureDetector(
+              onTap: () => _focusNode.requestFocus(),
+              child: _imageFiles.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      // Added to ensure the page is scrollable
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: LinearProgressIndicator(
+                              value:
+                                  _currentImageIndex / (_imageFiles.length - 1),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Wrap(
+                              spacing: 8.0, // Space between chips
+                              children: _labels.map((label) {
+                                bool isSelected =
+                                    _selectedLabels.contains(label);
+                                return ChoiceChip(
+                                  label: Text(label),
+                                  selected: isSelected,
+                                  onSelected: (bool selected) {
+                                    _toggleLabel(label);
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: _goToPreviousImage,
+                                  child: const Text('Previous Image (I)'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: _goToNextImage,
+                                  child: const Text('Next Image (P)'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: AspectRatio(
+                              aspectRatio: 16 / 5,
+                              child: Image.file(
+                                _imageFiles[_currentImageIndex],
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              ),
             ),
-    );
+          ),
+        ));
   }
 }

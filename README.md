@@ -6,13 +6,6 @@ Smart Swipe Full Local Implementation, in Flutter
 
 First download this entire repository to your computer.
 
-Make sure that xdg-desktop-portal and xdg-desktop-portal-gtk or xdg-desktop-portal-kde (depending on your desktop environment) are installed. This can be done by using 
-
-```
-sudo apt install xdg-desktop-portal xdg-desktop-portal-gtk
-sudo apt install xdg-desktop-portal xdg-desktop-portal-kde
-```
-
 Then just run the built linux binary is in
 ```
 ./build/linux/x64/release/bundle/smart_swipe_local 

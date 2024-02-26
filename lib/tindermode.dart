@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,11 +21,20 @@ class _TinderModeLabellingPageState extends State<TinderModeLabellingPage> {
   late Set<String> _selectedLabels;
   late int _totalSteps;
   late int _currentStep;
+  // For keybinding
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _initialize();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   Future<void> _initialize() async {
@@ -164,6 +174,11 @@ class _TinderModeLabellingPageState extends State<TinderModeLabellingPage> {
     }
 
     await _saveLabelsToFile();
+    // Update the UI before going to the next step
+    setState(() {});
+    // Delay for 100 milliseconds to allow the user to see the change
+    await Future.delayed(const Duration(milliseconds: 100));
+
     await _goToNextStep();
   }
 
@@ -183,81 +198,113 @@ class _TinderModeLabellingPageState extends State<TinderModeLabellingPage> {
       appBar: AppBar(
         title: const Text('Tinder Mode Labelling'),
       ),
-      body: _imageFiles.isEmpty || _labels.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  LinearProgressIndicator(
-                    value: _currentStep / (_totalSteps - 1),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: ElevatedButton(
-                          onPressed: _goToPreviousStep,
-                          child: const Text('Previous'),
-                          // rest of the button styling
+      body: KeyboardListener(
+        focusNode: _focusNode,
+        onKeyEvent: (event) {
+          if (event is KeyDownEvent) {
+            if (event.logicalKey == LogicalKeyboardKey.keyI) {
+              _goToPreviousStep();
+            } else if (event.logicalKey == LogicalKeyboardKey.keyP) {
+              _goToNextStep();
+            }
+            // If Key Y
+            else if (event.logicalKey == LogicalKeyboardKey.keyY) {
+              _handleLabelResponse(true);
+            }
+            // If Key N
+            else if (event.logicalKey == LogicalKeyboardKey.keyN) {
+              _handleLabelResponse(false);
+            }
+          }
+        },
+        child: Focus(
+          onFocusChange: (hasFocus) {
+            if (hasFocus) {
+              print("KeyboardListener has focus");
+            } else {
+              print("KeyboardListener lost focus");
+            }
+          },
+          child: GestureDetector(
+            onTap: () => _focusNode.requestFocus(),
+            child: _imageFiles.isEmpty || _labels.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        LinearProgressIndicator(
+                          value: _currentStep / (_totalSteps - 1),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: ElevatedButton(
-                          onPressed: _goToNextStep,
-                          child: const Text('Next'),
-                          // rest of the button styling
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: ElevatedButton(
+                                onPressed: _goToPreviousStep,
+                                child: const Text('Previous (I)'),
+                                // rest of the button styling
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: ElevatedButton(
+                                onPressed: _goToNextStep,
+                                child: const Text('Next (P)'),
+                                // rest of the button styling
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                        'Does this image contain "${_labels[_currentLabelIndex]}"?'),
-                  ),
-                  AspectRatio(
-                    aspectRatio: 16 / 5,
-                    child: Image.file(
-                      _imageFiles[_currentImageIndex],
-                      fit: BoxFit.contain,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                              'Does this image contain "${_labels[_currentLabelIndex]}"?'),
+                        ),
+                        AspectRatio(
+                          aspectRatio: 16 / 5,
+                          child: Image.file(
+                            _imageFiles[_currentImageIndex],
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: ElevatedButton(
+                                onPressed: () => _handleLabelResponse(true),
+                                child: const Text('Yes (Y)'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: _selectedLabels
+                                          .contains(_labels[_currentLabelIndex])
+                                      ? Colors.green
+                                      : null,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: ElevatedButton(
+                                onPressed: () => _handleLabelResponse(false),
+                                child: const Text('No (N)'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: !_selectedLabels
+                                          .contains(_labels[_currentLabelIndex])
+                                      ? Colors.red
+                                      : null,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: ElevatedButton(
-                          onPressed: () => _handleLabelResponse(true),
-                          child: const Text('Yes'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _selectedLabels
-                                    .contains(_labels[_currentLabelIndex])
-                                ? Colors.green
-                                : null,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: ElevatedButton(
-                          onPressed: () => _handleLabelResponse(false),
-                          child: const Text('No'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: !_selectedLabels
-                                    .contains(_labels[_currentLabelIndex])
-                                ? Colors.red
-                                : null,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+          ),
+        ),
+      ),
     );
   }
 }
