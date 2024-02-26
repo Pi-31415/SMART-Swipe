@@ -28,7 +28,7 @@ flutter pub get
 Then, you can run the app on your device by running
 
 ```
-    flutter run
+flutter run
 ```
 
 ### Building Binary
