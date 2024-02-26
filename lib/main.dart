@@ -15,11 +15,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SMART-Swipe 2.0', // Set your custom title here
-      themeMode: ThemeMode.dark, // Use dark theme mode
+      title: 'SMART-Swipe 2.0',
+      themeMode: ThemeMode.dark,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        // You can customize your dark theme further if needed
       ),
       home: const MainTabs(),
     );
@@ -30,7 +29,6 @@ class MainTabs extends StatefulWidget {
   const MainTabs({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _MainTabsState createState() => _MainTabsState();
 }
 
@@ -65,17 +63,17 @@ class _MainTabsState extends State<MainTabs>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            const Tab(text: 'Admin Panel'),
-            const Tab(text: 'Labels'),
+            Tab(icon: Icon(Icons.admin_panel_settings), text: 'Admin Panel'),
+            Tab(icon: Icon(Icons.label), text: 'Labels'),
             Tab(
-              icon: isFolderSelected ? null : const Icon(Icons.lock),
-              text: 'Normal Labelling',
+              icon: isFolderSelected ? Icon(Icons.check_box) : Icon(Icons.lock),
+              text: 'Review Labels',
             ),
             Tab(
-              icon: isFolderSelected ? null : const Icon(Icons.lock),
-              text: 'Tinder Mode',
+              icon: isFolderSelected ? Icon(Icons.edit) : Icon(Icons.lock),
+              text: 'Label Images',
             ),
-            const Tab(text: 'Developer Info'),
+            Tab(icon: Icon(Icons.person), text: 'Developer Info'),
           ],
           isScrollable: true,
         ),

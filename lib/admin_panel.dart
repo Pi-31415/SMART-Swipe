@@ -108,7 +108,12 @@ class _AdminPanelState extends State<AdminPanel>
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const SizedBox(height: 10),
-              const Text('Welcome to the Flutter Desktop App'),
+              if (_imageFiles.isEmpty) const Text('Welcome to SMART Swipe.'),
+              const SizedBox(height: 10),
+              // Show text if image Folder is empty
+              if (_imageFiles.isEmpty)
+                const Text(
+                    'First, select an Image folder, then edit your labels. Then you may begin labelling.'),
               const SizedBox(height: 10),
               Text('Image Folder Path: $_imageFolderPath'),
               const SizedBox(height: 10),

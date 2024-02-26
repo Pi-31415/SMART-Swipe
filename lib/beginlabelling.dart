@@ -32,6 +32,18 @@ class _BeginLabellingPageState extends State<BeginLabellingPage> {
     super.dispose();
   }
 
+  Future<void> _resetIndices() async {
+    // Reset the current image index
+    _currentImageIndex = 0;
+    // Save the reset index in shared preferences
+    await _prefs.setInt('lastLabelledImageIndex', _currentImageIndex);
+    // Reload selected labels for the first image
+    _selectedLabels =
+        await _loadSelectedLabels(_imageFiles[_currentImageIndex]);
+    // Update the UI
+    setState(() {});
+  }
+
   Future<void> _initialize() async {
     _prefs = await SharedPreferences.getInstance();
     _currentImageIndex = _prefs.getInt('lastLabelledImageIndex') ?? 0;
@@ -217,6 +229,11 @@ class _BeginLabellingPageState extends State<BeginLabellingPage> {
                                   child: const Text('Previous Image (I)'),
                                 ),
                                 ElevatedButton(
+                                  onPressed:
+                                      _resetIndices, // The new reset button
+                                  child: const Text('Go to first image'),
+                                ),
+                                ElevatedButton(
                                   onPressed: _goToNextImage,
                                   child: const Text('Next Image (P)'),
                                 ),
@@ -226,7 +243,7 @@ class _BeginLabellingPageState extends State<BeginLabellingPage> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: AspectRatio(
-                              aspectRatio: 16 / 5,
+                              aspectRatio: 16 / 4,
                               child: Image.file(
                                 _imageFiles[_currentImageIndex],
                                 fit: BoxFit.contain,

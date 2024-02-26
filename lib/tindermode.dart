@@ -55,6 +55,15 @@ class _TinderModeLabellingPageState extends State<TinderModeLabellingPage> {
     setState(() {});
   }
 
+  Future<void> _resetToFirstStep() async {
+    _currentStep = 0;
+    _updateStepIndices();
+    await _prefs.setInt('lastStep', _currentStep);
+    _selectedLabels =
+        await _loadSelectedLabels(_imageFiles[_currentImageIndex]);
+    setState(() {});
+  }
+
   Future<void> _goToNextStep() async {
     if (_currentStep < _totalSteps - 1) {
       _currentStep++;
@@ -249,6 +258,14 @@ class _TinderModeLabellingPageState extends State<TinderModeLabellingPage> {
                             Padding(
                               padding: const EdgeInsets.only(top: 20.0),
                               child: ElevatedButton(
+                                onPressed: _resetToFirstStep,
+                                child: const Text('Go to First Image'),
+                                // rest of the button styling
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20.0),
+                              child: ElevatedButton(
                                 onPressed: _goToNextStep,
                                 child: const Text('Next (P)'),
                                 // rest of the button styling
@@ -262,7 +279,7 @@ class _TinderModeLabellingPageState extends State<TinderModeLabellingPage> {
                               'Does this image contain "${_labels[_currentLabelIndex]}"?'),
                         ),
                         AspectRatio(
-                          aspectRatio: 16 / 5,
+                          aspectRatio: 16 / 4,
                           child: Image.file(
                             _imageFiles[_currentImageIndex],
                             fit: BoxFit.contain,
