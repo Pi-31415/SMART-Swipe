@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  url_launcher: ^6.0.20 # Check for the latest version
   path_provider: ^2.0.11 # Check for the latest version
   file_picker: ^5.0.1 # Ensure you have the latest version
   flutter_image_compress: ^1.1.0

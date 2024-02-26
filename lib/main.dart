@@ -3,6 +3,7 @@ import 'admin_panel.dart';
 import 'labels.dart';
 import 'beginlabelling.dart';
 import 'tindermode.dart';
+import 'author_info_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,7 +42,7 @@ class _MainTabsState extends State<MainTabs>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   void _handleFolderSelection(bool isSelected) {
@@ -56,7 +57,6 @@ class _MainTabsState extends State<MainTabs>
     super.dispose();
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +75,7 @@ class _MainTabsState extends State<MainTabs>
               icon: isFolderSelected ? null : const Icon(Icons.lock),
               text: 'Tinder Mode',
             ),
+            const Tab(text: 'Developer Info'),
           ],
           isScrollable: true,
         ),
@@ -84,11 +85,17 @@ class _MainTabsState extends State<MainTabs>
         children: [
           AdminPanel(onFolderSelected: _handleFolderSelection),
           const LabelsPage(),
-          if (isFolderSelected) const BeginLabellingPage() else Container(),
-          if (isFolderSelected)
-            const TinderModeLabellingPage()
-          else
-            Container(),
+          isFolderSelected
+              ? const BeginLabellingPage()
+              : Center(
+                  child: Text("Choose an image folder first",
+                      style: TextStyle(fontSize: 18))),
+          isFolderSelected
+              ? const TinderModeLabellingPage()
+              : Center(
+                  child: Text("Choose an image folder first",
+                      style: TextStyle(fontSize: 18))),
+          const AuthorInfoPage(),
         ],
       ),
     );
